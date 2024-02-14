@@ -1,5 +1,6 @@
 package com.kumuda.jetweatherforecast.navigation
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -9,6 +10,7 @@ import com.kumuda.jetweatherforecast.screens.main.MainScreen
 import com.kumuda.jetweatherforecast.screens.main.MainViewModel
 import com.kumuda.jetweatherforecast.screens.splash.WeatherSplashScreen
 
+@ExperimentalMaterial3Api
 @Composable
 fun WeatherNavigation() {
     val navController = rememberNavController()

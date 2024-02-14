@@ -52,7 +52,7 @@ fun WeatherSplashScreen(navController: NavController) {
             .size(330.dp)
             .scale(scale.value),
         shape = CircleShape,
-        color = Color.White,
+        color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(width = 2.dp, color = Color.LightGray)
     ) {
         Column(

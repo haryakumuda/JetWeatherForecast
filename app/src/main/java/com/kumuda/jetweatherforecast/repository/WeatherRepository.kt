@@ -1,5 +1,6 @@
 package com.kumuda.jetweatherforecast.repository
 
+import android.util.Log
 import com.kumuda.jetweatherforecast.data.DataOrException
 import com.kumuda.jetweatherforecast.model.Weather
 import com.kumuda.jetweatherforecast.network.WeatherApi
@@ -17,11 +18,17 @@ class WeatherRepository @Inject constructor(private val api: WeatherApi) {
     ): DataOrException<Weather, Boolean, Exception> {
         val response = try {
             api.getWeather(latitude, longitude)
+
+
         } catch (e: Exception) {
+            Log.d("INSIDE", "getWeather: $e")
             return DataOrException(e = e)
         }
+        Log.d("INSIDE", "getWeather: $response")
 
-        return DataOrException()
+
+
+        return DataOrException(data = response)
 
 
     }

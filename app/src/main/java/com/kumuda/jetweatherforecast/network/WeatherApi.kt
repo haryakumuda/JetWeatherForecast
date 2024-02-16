@@ -11,8 +11,7 @@ import javax.inject.Singleton
 interface WeatherApi {
     @GET(value = "data/2.5/forecast/daily")
     suspend fun getWeather(
-        @Query("lat") latitude: String = "-6.5944",
-        @Query("lon") longitude: String = "106.7892",
+        @Query("q") city: String = "bogor",
         @Query("units") units: String = "metric",
         @Query("appid") appid: String = Constans.API_KEY,
         ): Weather

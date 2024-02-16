@@ -12,12 +12,11 @@ import javax.inject.Singleton
 class WeatherRepository @Inject constructor(private val api: WeatherApi) {
 
     suspend fun getWeather(
-        latitude: String,
-        longitude: String,
+        city: String,
         units: String
     ): DataOrException<Weather, Boolean, Exception> {
         val response = try {
-            api.getWeather(latitude, longitude)
+            api.getWeather(city)
 
 
         } catch (e: Exception) {

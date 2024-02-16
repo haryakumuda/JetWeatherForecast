@@ -43,8 +43,10 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.kumuda.jetweatherforecast.R
 import com.kumuda.jetweatherforecast.data.DataOrException
+import com.kumuda.jetweatherforecast.model.City
 import com.kumuda.jetweatherforecast.model.Weather
 import com.kumuda.jetweatherforecast.model.WeatherItem
+import com.kumuda.jetweatherforecast.navigation.WeatherScreens
 import com.kumuda.jetweatherforecast.utils.formatDate
 import com.kumuda.jetweatherforecast.utils.formatDateTime
 import com.kumuda.jetweatherforecast.utils.formatDecimals
@@ -52,12 +54,12 @@ import com.kumuda.jetweatherforecast.widgets.WeatherAppBar
 
 @ExperimentalMaterial3Api
 @Composable
-fun MainScreen(navController: NavController, mainViewModel: MainViewModel = hiltViewModel()) {
-
+fun MainScreen(navController: NavController, mainViewModel: MainViewModel = hiltViewModel(), city: String?) {
+    Log.d("TAG", "MainScreen: $city")
     val weatherData = produceState<DataOrException<Weather, Boolean, Exception>>(
         initialValue = DataOrException(loading = true)
     ) {
-        value = mainViewModel.getWeatherData("-6.5944", "106.7892", "metric")
+        value = mainViewModel.getWeatherData(city ?: "Bogor", "metric")
     }.value
 
     if (weatherData.loading == true) {
@@ -78,6 +80,7 @@ fun MainScaffold(weather: Weather, navController: NavController) {
             WeatherAppBar(
                 title = weather.city.name + ", " + weather.city.country,
                 navController = navController,
+                onAddActionClicked = {navController.navigate(WeatherScreens.SearchScreen.name)},
                 icon = Icons.Default.ArrowBack,
                 elevation = 5.dp
             ) { Log.d("TAG", "MainScaffold: Button Clicked") }

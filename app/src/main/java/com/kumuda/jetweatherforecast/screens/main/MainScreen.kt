@@ -81,7 +81,6 @@ fun MainScaffold(weather: Weather, navController: NavController) {
                 title = weather.city.name + ", " + weather.city.country,
                 navController = navController,
                 onAddActionClicked = {navController.navigate(WeatherScreens.SearchScreen.name)},
-                icon = Icons.Default.ArrowBack,
                 elevation = 5.dp
             ) { Log.d("TAG", "MainScaffold: Button Clicked") }
         }, containerColor = MaterialTheme.colorScheme.surface

@@ -26,7 +26,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +52,7 @@ import com.kumuda.jetweatherforecast.model.City
 import com.kumuda.jetweatherforecast.model.Weather
 import com.kumuda.jetweatherforecast.model.WeatherItem
 import com.kumuda.jetweatherforecast.navigation.WeatherScreens
+import com.kumuda.jetweatherforecast.screens.favorites.SettingsViewModel
 import com.kumuda.jetweatherforecast.utils.formatDate
 import com.kumuda.jetweatherforecast.utils.formatDateTime
 import com.kumuda.jetweatherforecast.utils.formatDecimals
@@ -54,21 +60,38 @@ import com.kumuda.jetweatherforecast.widgets.WeatherAppBar
 
 @ExperimentalMaterial3Api
 @Composable
-fun MainScreen(navController: NavController, mainViewModel: MainViewModel = hiltViewModel(), city: String?) {
-    Log.d("TAG", "MainScreen: $city")
-    val weatherData = produceState<DataOrException<Weather, Boolean, Exception>>(
-        initialValue = DataOrException(loading = true)
-    ) {
-        value = mainViewModel.getWeatherData(city ?: "Bogor", "metric")
-    }.value
-
-    if (weatherData.loading == true) {
-        CircularProgressIndicator()
-    } else if (weatherData.data != null) {
-        MainScaffold(weatherData.data!!, navController)
-    } else {
-        Text(text = "Error !!!")
+fun MainScreen(
+    navController: NavController,
+    mainViewModel: MainViewModel = hiltViewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    city: String?
+) {
+    val unitFromDb = settingsViewModel.unitList.collectAsState().value
+    var unit by remember{
+        mutableStateOf("imperial")
     }
+    var isImperial by remember{
+        mutableStateOf(false)
+    }
+
+    if(!unitFromDb.isNullOrEmpty()){
+        unit = unitFromDb[0].unit.split(" ")[0].lowercase()
+        isImperial = unit == "imperial"
+        val weatherData = produceState<DataOrException<Weather, Boolean, Exception>>(
+            initialValue = DataOrException(loading = true)
+        ) {
+            value = mainViewModel.getWeatherData(city ?: "Bogor", unit)
+        }.value
+
+        if (weatherData.loading == true) {
+            CircularProgressIndicator()
+        } else if (weatherData.data != null) {
+            MainScaffold(weatherData.data!!, navController)
+        } else {
+            Text(text = "Error !!!")
+        }
+    }
+
 
 }
 
@@ -80,7 +103,7 @@ fun MainScaffold(weather: Weather, navController: NavController) {
             WeatherAppBar(
                 title = weather.city.name + ", " + weather.city.country,
                 navController = navController,
-                onAddActionClicked = {navController.navigate(WeatherScreens.SearchScreen.name)},
+                onAddActionClicked = { navController.navigate(WeatherScreens.SearchScreen.name) },
                 elevation = 5.dp
             ) { Log.d("TAG", "MainScaffold: Button Clicked") }
         }, containerColor = MaterialTheme.colorScheme.surface
@@ -177,7 +200,9 @@ fun WeatherDetailRow(weather: WeatherItem) {
         color = MaterialTheme.colorScheme.background
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -207,9 +232,9 @@ fun WeatherDetailRow(weather: WeatherItem) {
                             alpha = 0.8f
                         ), fontWeight = FontWeight.SemiBold
                     )
-                ){append(formatDecimals(weather.temp.max) + "°")}
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)){
-                    append(formatDecimals(weather.temp.min)+ "°")
+                ) { append(formatDecimals(weather.temp.max) + "°") }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                    append(formatDecimals(weather.temp.min) + "°")
                 }
             })
 

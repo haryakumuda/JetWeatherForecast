@@ -16,7 +16,7 @@ class WeatherRepository @Inject constructor(private val api: WeatherApi) {
         units: String
     ): DataOrException<Weather, Boolean, Exception> {
         val response = try {
-            api.getWeather(city)
+            api.getWeather(city, units)
 
 
         } catch (e: Exception) {

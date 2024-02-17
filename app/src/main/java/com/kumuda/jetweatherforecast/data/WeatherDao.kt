@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.kumuda.jetweatherforecast.model.City
 import com.kumuda.jetweatherforecast.model.Favorite
+import com.kumuda.jetweatherforecast.model.Unit
 import kotlinx.coroutines.flow.Flow
 
 
@@ -16,7 +17,6 @@ interface WeatherDao {
 
     @Query("SELECT * FROM fav_tbl")
     fun getFavorites(): Flow<List<Favorite>>
-
 
     @Query("SELECT * FROM fav_tbl where city = :city")
     suspend fun getFavById(city: String): Favorite
@@ -32,4 +32,21 @@ interface WeatherDao {
 
     @Delete
     suspend fun deleteFavorite(favorite: Favorite)
+
+    // Unit Table
+    @Query("SELECT * FROM settings_tbl")
+    fun getUnits(): Flow<List<Unit>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUnit(unit: Unit)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateUnit(unit: Unit)
+
+    @Query("DELETE FROM settings_tbl")
+    suspend fun deleteAllUnits()
+
+    @Delete
+    suspend fun deleteUnit(unit: Unit)
+
+
 }
